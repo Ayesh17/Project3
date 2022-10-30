@@ -9,109 +9,86 @@ def adaboost_train(X,Y,max_iter):
     ada =AdaBoost()
     x=ada.fit(X,Y,max_iter)
     y=ada.predict(X)
-    print(y)
+    print(ada.alpha_list)
+    print(ada.clf_list)
 
     return 0, 0
 # Helper functions
-def compute_error(y, y_pred, w_i):
-    '''
-    Calculate the error rate of a weak classifier m. Arguments:
-    y: actual target value
-    y_pred: predicted value by weak classifier
-    w_i: individual weights for each observation
-
-    Note that all arrays should be the same length
-    '''
-
-    return (sum(w_i * (np.not_equal(y, y_pred)).astype(int))) / sum(w_i)
+def compute_error(y, y_pred, w):
+    #error = (sum(w * (np.not_equal(y, y_pred)).astype(int))) / sum(w)
+    error = sum(w * (np.not_equal(y, y_pred)).astype(int))
+    return error
 
 
 def compute_alpha(error):
-    '''
-    Calculate the weight of a weak classifier m in the majority vote of the final classifier. This is called
-    alpha in chapter 10.1 of The Elements of Statistical Learning. Arguments:
-    error: error rate from weak classifier m
-    '''
-    return np.log((1 - error) / error)
+    #alpha = np.log((1 - error) / error)
+    alpha = 0.5 * np.log((1 - error) / error)
+    return alpha
 
-
-def update_weights(w_i, alpha, y, y_pred):
-    '''
-    Update individual weights w_i after a boosting iteration. Arguments:
-    w_i: individual weights for each observation
-    y: actual target value
-    y_pred: predicted value by weak classifier
-    alpha: weight of weak classifier used to estimate y_pred
-    '''
-    return w_i * np.exp(alpha * (np.not_equal(y, y_pred)).astype(int))
+#update weights after an iteration
+def update_weights(w, alpha, y, y_pred):
+    #new_weights = w * np.exp(alpha * (np.not_equal(y, y_pred)).astype(int))
+    new_weights = w * np.exp(alpha * (y * y_pred).astype(int))
+    return new_weights
 
 
 # Define AdaBoost class
 class AdaBoost():
 
     def __init__(self):
-        # self.w_i = None
-        self.alphas = []
-        self.G_M = []
-        self.M = None
+        # self.w = None
+        self.alpha_list = []
+        self.clf_list = []
+        self.max_iter = None
         self.training_errors = []
         self.prediction_errors = []
 
-    def fit(self, X, y, M):
-        '''
-        Fit model. Arguments:
-        X: independent variables
-        y: target variable
-        M: number of boosting rounds. Default is 100
-        '''
-
+    def fit(self, X, y, max_iter):
         # Clear before calling
-        self.alphas = []
+        self.alpha_list = []
         self.training_errors = []
-        self.M = M
+        self.max_iter = max_iter
 
-        # Iterate over M weak classifiers
-        for m in range(0, M):
+        # Iterate over max_iter weak classifiers
+        for m in range(0, max_iter):
 
             # Set weights for current boosting iteration
             if m == 0:
-                w_i = np.ones(len(y)) * 1 / len(y)  # At m = 0, weights are all the same and equal to 1 / N
+                N = len(y)    #Num.of Samples
+                w = np.ones(N) * 1 / N  # At m = 0, weights are all the same and equal to 1 / N
             else:
-                w_i = update_weights(w_i, alpha_m, y, y_pred)
-            # print(w_i)
+                w = update_weights(w, alpha, y, y_pred)
+            # print(w)
 
             # (a) Fit weak classifier and predict labels
-            G_m = DecisionTreeClassifier(max_depth=1)  # Stump: Two terminal-node classification tree
-            G_m.fit(X, y, sample_weight=w_i)
-            y_pred = G_m.predict(X)
+            clf = DecisionTreeClassifier(max_depth=1)  # Stump: Two terminal-node classification tree
+            clf.fit(X, y, sample_weight=w)
+            y_pred = clf.predict(X)
 
-            self.G_M.append(G_m)  # Save to list of weak classifiers
+            self.clf_list.append(clf)  # Save to list of weak classifiers
 
             # (b) Compute error
-            error_m = compute_error(y, y_pred, w_i)
-            self.training_errors.append(error_m)
+            error = compute_error(y, y_pred, w)
+            self.training_errors.append(error)
             # print(error_m)
 
             # (c) Compute alpha
-            alpha_m = compute_alpha(error_m)
-            self.alphas.append(alpha_m)
+            alpha = compute_alpha(error)
+            self.alpha_list.append(alpha)
             # print(alpha_m)
 
-        assert len(self.G_M) == len(self.alphas)
+        assert len(self.clf_list) == len(self.alpha_list)
 
     def predict(self, X):
-        '''
-        Predict using fitted model. Arguments:
-        X: independent variables
-        '''
-
         # Initialise dataframe with weak predictions for each observation
-        weak_preds = pd.DataFrame(index=range(len(X)), columns=range(self.M))
-
+        weak_preds = pd.DataFrame(index=range(len(X)), columns=range(self.max_iter))
+        print("weak_preds",weak_preds)
         # Predict class label for each weak classifier, weighted by alpha_m
-        for m in range(self.M):
-            y_pred_m = self.G_M[m].predict(X) * self.alphas[m]
-            weak_preds.iloc[:, m] = y_pred_m
+        for i in range(self.max_iter):
+            y_pred_i = self.clf_list[i].predict(X) * self.alpha_list[i]
+            print(y_pred_i)
+            weak_preds.iloc[:, i] = y_pred_i
+        print("weak_preds2", weak_preds)
 
         # Estimate final predictions
         y_pred = (1 * np.sign(weak_preds.T.sum())).astype(int)
@@ -119,16 +96,11 @@ class AdaBoost():
         return y_pred
 
     def error_rates(self, X, y):
-        '''
-        Get the error rates of each weak classifier. Arguments:
-        X: independent variables
-        y: target variables associated to X
-        '''
 
         self.prediction_errors = []  # Clear before calling
 
         # Predict class label for each weak classifier
-        for m in range(self.M):
-            y_pred_m = self.G_M[m].predict(X)
-            error_m = compute_error(y=y, y_pred=y_pred_m, w_i=np.ones(len(y)))
-            self.prediction_errors.append(error_m)
+        for i in range(self.max_iter):
+            y_pred = self.clf_list[i].predict(X)
+            error = compute_error(y=y, y_pred=y_pred, w=np.ones(len(y)))
+            self.prediction_errors.append(error)
