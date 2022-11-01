@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4ecde24a-f354-478e-ae93-b3ad23384756" name="Changes" comment="" />
+    <list default="true" id="4ecde24a-f354-478e-ae93-b3ad23384756" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/adaboost2.py" beforeDir="false" afterPath="$PROJECT_DIR$/adaboost2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_script.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_script.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -38,7 +42,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "last_opened_file_path": "C:/Users/User/Downloads/Meepaganithage_Ayesh_Project1-3/Meepaganithage_Ayesh_Project1"
+    "last_opened_file_path": "C:/Users/aMeepaganithage/PycharmProjects/Project3"
   }
 }]]></component>
   <component name="RunManager">
