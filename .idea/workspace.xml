@@ -5,7 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4ecde24a-f354-478e-ae93-b3ad23384756" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/adaboost.py" beforeDir="false" afterPath="$PROJECT_DIR$/adaboost.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/adaboost2.py" beforeDir="false" afterPath="$PROJECT_DIR$/adaboost2.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test_script.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_script.py" afterDir="false" />
     </list>
