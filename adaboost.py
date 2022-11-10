@@ -8,8 +8,8 @@ def adaboost_train(X,Y,max_iter):
 
     alpha_list = ada.alpha_list
     clf_list = ada.clf_list
-    print(ada.alpha_list)
-    print(ada.clf_list)
+    # print(ada.alpha_list)
+    # print(ada.clf_list)
 
     return clf_list, alpha_list
 
@@ -18,36 +18,31 @@ def adaboost_test(X,Y,f,alpha):
     acc =ada.predict(X, Y)
     return acc
 
-# Helper functions
+
+#compute error
 def compute_error(y, y_pred, w):
-    #error = (sum(w * (np.not_equal(y, y_pred)).astype(int))) / sum(w)
     error = sum(w * (np.not_equal(y, y_pred)).astype(int))
     return error
 
-
+#compute alpha
 def compute_alpha(error):
-    #alpha = np.log((1 - error) / error)
     alpha = 0.5 * np.log2((1 - error) / error)
     return alpha
 
-#update weights after an iteration
+#compute updated weights
 def update_weights(w, alpha, y, y_pred):
-    #new_weights = w * np.exp(alpha * (np.not_equal(y, y_pred)).astype(int))
     new_weights = w * np.exp(-1 * alpha * (y * y_pred).astype(int))
-    # print("new",new_weights)
+
     sum = 0
     for i in range(len(new_weights)):
         sum += new_weights[i]
-    # print("sum",sum)
     z = 1/sum
-    # print("z", z)
     for i in range(len(new_weights)):
         new_weights[i] = new_weights[i]*z
-    # print("new2", new_weights)
     return new_weights
 
 
-# Define AdaBoost class
+#AdaBoost class
 class AdaBoost():
 
     def __init__(self,alpha_list = [],clf_list = []):
@@ -61,43 +56,55 @@ class AdaBoost():
         self.alpha_list = []
         self.max_iter = max_iter
 
+        X2 = X.copy()
+        Y2 = Y.copy()
+
         # Iterate over max_iter weak classifiers
         for i in range(0, max_iter):
-
-            # Set weights for current boosting iteration
             if i == 0:
                 N = len(Y)    #Num.of Samples
                 w = np.ones(N) * 1 / N  # Inititalize weights to 1 / N
-                # print("w",w)
+                w2 = np.copy(w)
             else:
-                w = update_weights(w, alpha, Y, y_pred)
-                # print("w", w)
-            # print(w)
+                w = update_weights(w2, alpha, Y2, y_pred)
 
-            # (a) Fit weak classifier and predict labels
-            clf = tree.DecisionTreeClassifier(max_depth=1)  # Stump: Two terminal-node classification tree
-            print("w",w)
-            clf.fit(X, Y, sample_weight=w)
-            y_pred = clf.predict(X)
-            # print(tree.plot_tree(clf))
-            # print("y",y_pred)
-            for i in range(len(Y)):
-                if y_pred[i] != Y[i]:
-                    print("wrong",i,Y[i],y_pred[i])
+                #get sample weights
+                w2= np.copy(w)
+                min = np.amin(w2)
+                for i in range(len(w2)):
+                    w2[i] = w2[i]/min
+                w2 = np.round(w2, 0)
 
-            self.clf_list.append(clf)  # Save to list of weak classifiers
+                #get new sample list after adjusting based on weights
+                for i in range(len(X)):
+                    count = w2[i].astype(int) -1
+                    for j in range(0,count):
+                        X2.append(X[i])
+                        Y2.append(Y[i])
 
-            error = compute_error(Y, y_pred, w)
+                #get weights for the new sample list
+                N = len(X2)
+                w2 = np.ones(N) * 1 / N
+
+
+            #get depth-1 tree classifier
+            clf = tree.DecisionTreeClassifier(max_depth=1)
+            clf.fit(X2, Y2)
+            y_pred = clf.predict(X2)
+
+            #append to classifier list
+            self.clf_list.append(clf)
+
+            error = compute_error(Y2, y_pred, w2)
 
             #get the list of alphas
             alpha = compute_alpha(error)
             self.alpha_list.append(alpha)
 
-        # assert len(self.clf_list) == len(self.alpha_list)
 
     def predict(self, X, Y):
 
-        weak_preds =np.empty(shape=(len(self.clf_list),len(X)))
+        weak_preds = np.empty(shape=(len(self.clf_list),len(X)))
 
         # get predictions by classifier list
         for i in range(len(self.clf_list)):

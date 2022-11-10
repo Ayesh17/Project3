@@ -6,6 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="4ecde24a-f354-478e-ae93-b3ad23384756" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/adaboost.py" beforeDir="false" afterPath="$PROJECT_DIR$/adaboost.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/adaboost2.py" beforeDir="false" afterPath="$PROJECT_DIR$/adaboost_test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_script.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_script.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,10 +43,10 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "last_opened_file_path": "C:/Research"
+    "last_opened_file_path": "C:/Research/Logan_directory_structure5"
   }
 }]]></component>
-  <component name="RunManager" selected="Python.ONR_convert2hmm_input">
+  <component name="RunManager" selected="Python.test_script">
     <configuration name="ONR_convert2hmm_input" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Project3" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -88,8 +91,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.ONR_convert2hmm_input" />
         <item itemvalue="Python.test_script" />
+        <item itemvalue="Python.ONR_convert2hmm_input" />
       </list>
     </recent_temporary>
   </component>
